@@ -19,39 +19,37 @@
 </template>
 
 <script>
+import { useProductStore } from '../stores/ProductStore.js';
 let id = 0;
 export default {
     data(){
         return {
             title: '',
             price: '',
-            products: [
-                {id: id++, title: "Example1", price: 999},
-                {id: id++, title: "Example2", price: 999},
-                {id: id++, title: "Example3", price: 999},
-                {id: id++, title: "Example4", price: 999},
-            ]
+        }
+    },
+    computed: {
+        products() {
+            const productStore = useProductStore();
+            return productStore.products;
         }
     },
     methods: {
         addProduct() {
-            if (this.title && this.price)
-            {
-                this.products.push({id: id++, title: this.title, price: this.price});
+            const productStore = useProductStore();
+            if (this.title && this.price > 0) {
+                productStore.addProduct({ id: Date.now(), title: this.title, price: this.price });
                 this.title = '';
-                this.price = '';
+                this.price = 0;
             } else {
                 alert("Заповніть дані!");
             }
         },
-        removeProduct(product) {
-            this.products = this.products.filter( (t) => t != product);
-        },
-        changeProduct(product){
-            this.products[product.id].title = this.title;
-            this.products[product.id].price = this.price;
+        removeProduct(id) {
+            const productStore = useProductStore();
+            productStore.removeProduct(id);
         }
-    }
+    },
 }
 </script>
 
